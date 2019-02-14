@@ -246,19 +246,25 @@ input[type="submit"] {
 }
 
 @media only screen and (min-width: 400px) and (max-width: 768px) {
+  .lowerContainer{
+    flex-direction: column;
+  }
   .lowerContainer_firstColumn {
     order: 2;
-    width: 500px;
+    width: 100%;
   }
   .lowerContainer_secondColumn {
     order: 1;
-    width: 500px;
+    width: 100%;
   }
 }
 
 @media only screen and (max-width: 399px) {
-  .imageSize {
-    height: 135px;
-    width: 100%;
+  .lowerContainer_firstColumn{
+    flex-direction: column;
   }
+  .firstColumn_secondRow_image{
+    flex-direction: column;
+  }
+  
 }
