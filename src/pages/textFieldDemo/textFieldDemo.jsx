@@ -1,4 +1,3 @@
-/* eslint-disable quotes */
 import React from 'react';
 import { TextField } from '../../components';
 import styling from '../../components/textField/style';
