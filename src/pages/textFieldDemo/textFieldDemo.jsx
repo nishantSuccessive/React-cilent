@@ -1,18 +1,26 @@
 import React from 'react';
-import { TextField } from '../../components';
+import { Field } from '../../components';
 import styling from '../../components/textField/style';
 
-const TextFieldDemo = () => (
-  <>
+class TextFieldDemo extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {}
+  }
+
+  render(){
+    return(
+
     <div>
-      <h4>This is Disabled Input</h4>
-      <TextField name="Disabled Input" disabled />
-      <h4>A valid Input</h4>
-      <TextField name="Accessible" />
-      <h4>An input with error</h4>
-      <TextField name="101" id="3" />
-      <h4 style={styling.textColor}>Could not be greater than</h4>
+
+      <Field name="Disabled Input" disabled setText="This is disabled input" />
+      <Field name="Accessible" setText="Input is accessible" />
+      <Field name="101" id="3"  setText="input is having errors"/>
+      <Field style={styling.textColor} setText="Could not be greater than"></Field>
     </div>
-  </>
-);
+
+    )
+  }
+};
 export { TextFieldDemo };
