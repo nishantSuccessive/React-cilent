@@ -7,7 +7,7 @@ export const TextField = (props) => {
   const colorStyle = id === '3' ? styling.color : '';
   const newProp = { ...styling.base, ...colorStyle };
   return (
-    <input type="textField" style={newProp} value={name}/>
+    <input type="textField" style={newProp} value={name} />
   );
 };
 TextField.propTypes = {

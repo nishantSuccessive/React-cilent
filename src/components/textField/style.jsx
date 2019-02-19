@@ -15,5 +15,11 @@ const styling = {
   textColor: {
     color: 'red',
   },
+  imgAlign: {
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    display: 'block',
+  },
+
 };
 export default styling;
