@@ -6,8 +6,7 @@ import { PUBLIC_IMAGE_FOLDER } from '../../configs/constants';
 class TextFieldDemo extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-    };
+    this.state = this.props;
   }
 
   render() {
