@@ -15,12 +15,9 @@ export class Slider extends React.Component {
     this.interval = setInterval(() => {
       const { index } = this.state;
       if (random) {
-        console.log('updated value', index);
-
         this.setState({
           index: roundRobin(5, index),
         });
-        console.log('updated value', index);
         return;
       }
       this.setState({

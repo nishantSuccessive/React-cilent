@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { TextField } from './textField';
+import { TextField } from './TextField';
 
 export const Field = (props) => {
   const { setText, name } = props;

@@ -9,15 +9,20 @@ export class SelectField extends React.Component {
   }
 
   render() {
-    const { options, defaultText, ...rest } = this.props;
+    const {
+      error, options, defaultText, ...rest
+    } = this.props;
     return (
       <div>
         <select style={styleClass.base} {...rest}>
-          <option disabled selected>{defaultText}</option>
+          <option disabled selected>
+            {defaultText}
+          </option>
           {options.map(item => (
             <option>{item.label}</option>
           ))}
         </select>
+        <p style={styleClass.error}>{error}</p>
       </div>
     );
   }
