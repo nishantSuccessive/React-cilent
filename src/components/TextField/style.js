@@ -1,5 +1,4 @@
-
-const styling = {
+export const styling = {
   base: {
     paddingLeft: '2px',
     paddingRight: '2px',
@@ -15,5 +14,12 @@ const styling = {
   textColor: {
     color: 'red',
   },
+  imgAlign: {
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    display: 'block',
+  },
+  forDropDown: {
+    backgroundColor: 'gray',
+  },
 };
-export default styling;
