@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { styleForTextField } from './style';
 
 export class NewText extends React.Component {
   constructor(props) {
@@ -8,10 +9,15 @@ export class NewText extends React.Component {
   }
 
   render() {
-    return <input type="textField" {...this.props} />;
+    const { error, ...rest } = this.props;
+    return (
+      <div>
+        <input type="textField" style={styleForTextField.base} {...rest} />
+        <p style={styleForTextField.error}>{error}</p>
+      </div>
+    );
   }
 }
-
 NewText.propTypes = {
   error: PropTypes.string,
   value: PropTypes.string.isRequired,

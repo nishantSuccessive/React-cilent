@@ -1,5 +1,4 @@
-
-const styling = {
+export const styling = {
   base: {
     paddingLeft: '2px',
     paddingRight: '2px',
@@ -24,4 +23,3 @@ const styling = {
     backgroundColor: 'gray',
   },
 };
-export default styling;
