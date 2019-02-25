@@ -10,13 +10,13 @@ export class RadioGroup extends React.Component {
 
   render() {
     const {
-      error, value, options, ...rest
+      error, options, ...rest
     } = this.props;
     return (
       <Fragment>
         {options.map(item => (
           <div>
-            <input type="radio" {...rest} name="Sports" value={item.value} />
+            <input type="radio" {...rest} name="Sports" key={item.label} value={item.label} />
             {item.label}
           </div>
         ))}
