@@ -6,12 +6,12 @@ import Typography from '@material-ui/core/Typography';
 import { theme } from './theme';
 
 
-import { ChildrenDemo } from './pages';
+import { Trainee } from './pages';
 
 const App = () => (
   <MuiThemeProvider theme={theme}>
     <Typography>
-      <ChildrenDemo />
+      <Trainee />
     </Typography>
   </MuiThemeProvider>
 );
