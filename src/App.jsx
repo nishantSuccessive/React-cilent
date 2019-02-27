@@ -16,11 +16,15 @@ const App = () => (
     <CssBaseline />
     <Router>
       <Switch>
-        <AuthRoute path="/login" component={Login} />
+        <AuthRoute exact path="/login" component={Login} />
         <PrivateRoute path="/inputdemo" component={InputDemo} />
         <PrivateRoute path="/textfielddemo" component={TextFieldDemo} />
         <PrivateRoute path="/trainee" component={Trainee} />
+
         <PrivateRoute path="/childrendemo" component={ChildrenDemo} />
+        <PrivateRoute path="/" component={NoMatch} />
+
+
       </Switch>
     </Router>
 

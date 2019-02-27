@@ -17,7 +17,7 @@ const styles = {
     flexGrow: 1,
   },
   logout: {
-    flexGrow: 0.3,
+    marginLeft: '30px',
   },
   forLink: {
     color: white,
