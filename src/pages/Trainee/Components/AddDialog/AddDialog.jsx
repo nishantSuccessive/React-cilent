@@ -284,7 +284,7 @@ class AddDialog extends React.Component {
           </DialogContent>
 
           <DialogActions>
-            <Button color="primary">Cancel</Button>
+            <Button color="primary" onClick={onClose}>Cancel</Button>
             {(this.forErrors()) ? <Button color="primary" onClick={() => onClose(name, email, password)}>Submit</Button> : <Button disabled>Submit</Button>}
           </DialogActions>
         </Dialog>

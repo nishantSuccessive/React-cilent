@@ -17,6 +17,7 @@ export const styling = {
   imgAlign: {
     marginLeft: 'auto',
     marginRight: 'auto',
+    marginTop: '20px',
     display: 'block',
   },
   forDropDown: {

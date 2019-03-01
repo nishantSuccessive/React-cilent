@@ -114,7 +114,7 @@ render() {
   }
   return (
     <div>
-      <h3>Name</h3>
+      <h3>Name </h3>
       <NewText
         value={name}
         onChange={this.handleChange('name')}

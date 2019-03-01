@@ -1,0 +1,1 @@
+export { rows } from './constants';

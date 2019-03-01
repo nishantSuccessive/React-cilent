@@ -6,6 +6,7 @@ import Button from '@material-ui/core/Button';
 import { trainees } from './data';
 import { AddDialog } from './Components';
 import { styleForButton } from './style';
+import TraineeTable from './Components/TraineeTable/TraineeTable';
 
 
 export class TraineeList extends React.Component {
@@ -40,6 +41,7 @@ export class TraineeList extends React.Component {
           fullWidth={fullWidth}
           maxWidth={maxWidth}
         />
+        <TraineeTable />
         <div>
           <ul>
             {items}
