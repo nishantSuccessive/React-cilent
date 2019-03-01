@@ -10,9 +10,9 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
   <>
     <Route
       {...rest}
-      render={() => (
+      render={matchprops => (
         <PrivateLayout>
-          <Component />
+          <Component {...matchprops} />
         </PrivateLayout>
       )}
     />

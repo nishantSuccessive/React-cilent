@@ -34,19 +34,19 @@ export class InputDemo extends React.Component {
     };
   }
 
-  handleChange = Field => (event) => {
+  handleChange = field => (event) => {
     const { isTouched } = this.state;
-    if (Field === 'sport') {
+    if (field === 'sport') {
       this.setState({
-        [Field]: event.target.value,
+        [field]: event.target.value,
         radio: '',
-        isTouched: { ...isTouched, radio: false, [Field]: true },
-      }, this.Validate(Field));
+        isTouched: { ...isTouched, radio: false, [field]: true },
+      }, () => this.validateErrors(field));
     } else {
       this.setState({
-        [Field]: event.target.value,
-        isTouched: { ...isTouched, [Field]: true },
-      }, this.Validate(Field));
+        [field]: event.target.value,
+        isTouched: { ...isTouched, [field]: true },
+      }, () => this.validateErrors(field));
     }
   };
 
@@ -65,10 +65,10 @@ forErrors = () => {
 }
 
 forblur = (value) => {
-  this.Validate(value);
+  this.validateErrors(value);
 }
 
-Validate = (value) => {
+validateErrors = (value) => {
   let isPresent = false;
   const {
     error, name, sport, radio, hasErrors,
@@ -102,7 +102,6 @@ Validate = (value) => {
 }
 
 render() {
-  console.log(this.state);
   const {
     name, sport, error, radio,
   } = this.state;

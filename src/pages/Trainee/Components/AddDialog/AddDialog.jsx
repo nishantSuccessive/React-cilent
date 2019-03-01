@@ -70,20 +70,20 @@ class AddDialog extends React.Component {
     };
   }
 
-  handleChange = Field => (event) => {
+  handleChange = field => (event) => {
     const { isTouched } = this.state;
     this.setState(
       {
-        [Field]: event.target.value,
-        isTouched: { ...isTouched, [Field]: true },
+        [field]: event.target.value,
+        isTouched: { ...isTouched, [field]: true },
       },
-      this.Validate(Field),
+      () => this.validateErrors(field),
     );
   };
 
 
   forblur = (value) => {
-    this.Validate(value);
+    this.validateErrors(value);
   };
 
   handleClickShowPassword = () => {
@@ -108,8 +108,9 @@ class AddDialog extends React.Component {
     return true;
   }
 
-  Validate = (value) => {
+  validateErrors = (value) => {
     let isPresent = false;
+
     const {
       error, name, email, password, confirmpassword, hasErrors,
     } = this.state;
@@ -134,11 +135,18 @@ class AddDialog extends React.Component {
             });
           }
         });
+        if (err.inner.some(option => option.path === value) && hasErrors[value]) {
+          this.setState({
+            error: { ...error, [value]: '' },
+            hasErrors: { ...hasErrors, [value]: false },
+          });
+        }
       });
     if (!isPresent) {
       this.setState({
         error: { ...error, [value]: '' },
         hasErrors: { ...hasErrors, [value]: false },
+
       });
     }
   };
