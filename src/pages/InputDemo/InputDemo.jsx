@@ -4,8 +4,7 @@ import {
   NewText, RadioGroup, SelectField, Button,
 } from '../../components/index';
 import { DropDownValues, Cricket, Football } from '../../configs/constants';
-import { styleForButton } from '../../components/Button';
-import { styleForTextField } from '../../components/NewText';
+import { styleForButton, styleForTextField } from './style';
 
 const schema = yup.object().shape({
   name: yup.string().required(),

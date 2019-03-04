@@ -5,3 +5,4 @@ export { NewText } from './NewText';
 export { SelectField } from './SelectField';
 export { RadioGroup } from './RadioGroup';
 export { Button } from './Button';
+export { Math } from './Math';

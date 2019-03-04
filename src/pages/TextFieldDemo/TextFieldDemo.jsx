@@ -1,6 +1,6 @@
 import React from 'react';
 import { Field, Slider } from '../../components';
-import { styling } from '../../components/TextField';
+import { styling } from './style';
 import { PUBLIC_IMAGE_FOLDER } from '../../configs/constants';
 
 class TextFieldDemo extends React.Component {
