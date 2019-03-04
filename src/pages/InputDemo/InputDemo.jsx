@@ -36,10 +36,18 @@ export class InputDemo extends React.Component {
 
   handleChange = Field => (event) => {
     const { isTouched } = this.state;
-    this.setState({
-      [Field]: event.target.value,
-      isTouched: { ...isTouched, [Field]: true },
-    }, this.Validate(Field));
+    if (Field === 'sport') {
+      this.setState({
+        [Field]: event.target.value,
+        radio: '',
+        isTouched: { ...isTouched, radio: false, [Field]: true },
+      }, this.Validate(Field));
+    } else {
+      this.setState({
+        [Field]: event.target.value,
+        isTouched: { ...isTouched, [Field]: true },
+      }, this.Validate(Field));
+    }
   };
 
 forErrors = () => {
@@ -94,6 +102,7 @@ Validate = (value) => {
 }
 
 render() {
+  console.log(this.state);
   const {
     name, sport, error, radio,
   } = this.state;

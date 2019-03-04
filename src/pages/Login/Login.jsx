@@ -59,6 +59,9 @@ const styles = theme => ({
   submit: {
     marginTop: theme.spacing.unit * 3,
   },
+  forFooter: {
+    margin: '10px',
+  },
 });
 
 class Login extends React.Component {
