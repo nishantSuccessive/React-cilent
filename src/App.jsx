@@ -1,18 +1,16 @@
 
 import React from 'react';
 import { MuiThemeProvider } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-
+import CssBaseline from '@material-ui/core/CssBaseline';
 import { theme } from './theme';
-
-
-import { Trainee } from './pages';
+import { Trainee, Navbar } from './pages';
 
 const App = () => (
   <MuiThemeProvider theme={theme}>
-    <Typography>
-      <Trainee />
-    </Typography>
+    <CssBaseline />
+    <Navbar />
+    <Trainee />
+
   </MuiThemeProvider>
 );
 

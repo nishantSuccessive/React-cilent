@@ -287,7 +287,7 @@ class AddDialog extends React.Component {
 AddDialog.propTypes = {
   open: PropTypes.bool,
   onClose: PropTypes.func,
-  classes: PropTypes.objectOf(PropTypes.object()).isRequired,
+  classes: PropTypes.objectOf(PropTypes.object).isRequired,
 };
 AddDialog.defaultProps = {
   open: false,
