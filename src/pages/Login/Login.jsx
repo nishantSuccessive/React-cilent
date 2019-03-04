@@ -86,20 +86,20 @@ class Login extends React.Component {
     };
   }
 
-   handleChange = Field => (event) => {
+   handleChange = field => (event) => {
      const { isTouched } = this.state;
      this.setState(
        {
-         [Field]: event.target.value,
-         isTouched: { ...isTouched, [Field]: true },
+         [field]: event.target.value,
+         isTouched: { ...isTouched, [field]: true },
        },
-       this.Validate(Field),
+       () => this.validateErrors(field),
      );
    };
 
 
     forblur = (value) => {
-      this.Validate(value);
+      this.validateErrors(value);
     };
 
     handleClickShowPassword = () => {
@@ -124,8 +124,9 @@ class Login extends React.Component {
       return true;
     }
 
-    Validate = (value) => {
+    validateErrors = (value) => {
       let isPresent = false;
+
       const {
         error, email, password, hasErrors,
       } = this.state;
@@ -142,6 +143,7 @@ class Login extends React.Component {
         })
         .catch((err) => {
           isPresent = true;
+
           err.inner.forEach((element) => {
             if (element.path === value) {
               this.setState({
@@ -155,6 +157,7 @@ class Login extends React.Component {
         this.setState({
           error: { ...error, [value]: '' },
           hasErrors: { ...hasErrors, [value]: false },
+
         });
       }
     };
@@ -168,6 +171,7 @@ class Login extends React.Component {
         showPassword,
         email,
       } = this.state;
+
       return (
         <main className={classes.main}>
           <CssBaseline />

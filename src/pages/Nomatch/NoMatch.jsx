@@ -12,7 +12,11 @@ const styles = () => ({
     textAlign: 'Center',
     marginTop: '10px',
     color: 'gray',
-  }
+  },
+  fordiv: {
+    textAlign: 'Center',
+    marginTop: '100px',
+  },
 });
 
 
@@ -25,8 +29,8 @@ class NoMatch extends React.Component {
   render() {
     const { classes } = this.props;
     return (
-      <div>
-        <Typography variant="h4" className={classes.text} gutterBottom>
+      <div className={classes.fordiv}>
+        <Typography variant="h3" className={classes.text} gutterBottom>
         No Result Found
         </Typography>
         <Typography variant="h6" className={classes.forTextColor} gutterBottom>

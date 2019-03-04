@@ -10,6 +10,8 @@ import {
   Trainee, InputDemo, TextFieldDemo, Login, ChildrenDemo, NoMatch,
 } from './pages';
 import { AuthRoute, PrivateRoute } from './routes';
+import TraineeDetail from './pages/Trainee/TraineeDetail';
+
 
 const App = () => (
   <MuiThemeProvider theme={theme}>
@@ -19,7 +21,8 @@ const App = () => (
         <AuthRoute exact path="/login" component={Login} />
         <PrivateRoute path="/inputdemo" component={InputDemo} />
         <PrivateRoute path="/textfielddemo" component={TextFieldDemo} />
-        <PrivateRoute path="/trainee" component={Trainee} />
+        <PrivateRoute exact path="/trainee" component={Trainee} />
+        <PrivateRoute exact path="/trainee/:id" component={TraineeDetail} />
 
         <PrivateRoute path="/childrendemo" component={ChildrenDemo} />
         <PrivateRoute path="/" component={NoMatch} />
