@@ -5,7 +5,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import PropTypes from 'prop-types';
+import PropTypes, { object } from 'prop-types';
 
 export class AlertDialogSlide extends React.Component {
   state = {
@@ -14,7 +14,7 @@ export class AlertDialogSlide extends React.Component {
   };
 
   render() {
-    const { open, onClose } = this.props;
+    const { open, onClose, data } = this.props;
     const { fullWidth, maxWidth } = this.state;
     return (
       <Dialog
@@ -34,7 +34,7 @@ export class AlertDialogSlide extends React.Component {
           <Button onClick={onClose} color="primary">
           Disagree
           </Button>
-          <Button onClick={onClose} color="primary" autoFocus>
+          <Button onClick={() => onClose(data)} color="primary" autoFocus>
           Agree
           </Button>
         </DialogActions>
@@ -45,6 +45,7 @@ export class AlertDialogSlide extends React.Component {
 AlertDialogSlide.propTypes = {
   open: PropTypes.bool,
   onClose: PropTypes.func,
+  data: PropTypes.arrayOf(object).isRequired,
 };
 AlertDialogSlide.defaultProps = {
   open: false,

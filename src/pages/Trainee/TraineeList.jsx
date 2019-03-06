@@ -69,9 +69,9 @@ export class TraineeList extends React.Component {
     console.log('Edit trainee', name, email);
   };
 
-  handleCloseDeleteTrainee = (name, email) => {
+  handleCloseDeleteTrainee = (data) => {
+    console.log('Deleted trainee', data);
     this.setState({ open: false, deleteTrainee: false, user: '' });
-    console.log('Deleted trainee', name, email);
   };
 
   handleSelect = (event, property) => {
