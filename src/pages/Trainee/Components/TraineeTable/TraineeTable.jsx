@@ -8,6 +8,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
+import IconButton from '@material-ui/core/IconButton';
+import TablePagination from '@material-ui/core/TablePagination';
 
 const styles = theme => ({
   root: {
@@ -24,12 +26,17 @@ const styles = theme => ({
     },
     cursor: 'pointer',
   },
+  forColumn: {
+    padding: 5,
+    display: 'flex',
+  },
 });
 
 class Traineetable extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+    };
   }
 
   handleChange = property => (event) => {
@@ -42,58 +49,94 @@ class Traineetable extends React.Component {
     onSelect(event, property);
   }
 
-  render() {
-    const {
-      columns, data, orderBy, order,
-    } = this.props;
-    const { classes } = this.props;
-    return (
-      <Paper className={classes.root}>
-        <Table className={classes.table}>
+renderForTableHead = () => {
+  const {
+    columns, orderBy, order,
+  } = this.props;
+  return (
+    columns.map(element => (
 
-          <TableHead>
-            <TableRow>
-              {
-                columns.map(element => (
+      <TableCell
+        align={element.align}
+        sortDirection={orderBy === element.field ? order : false}
+      >
+        <TableSortLabel
+          active={orderBy === element.field}
+          direction={order}
+          onClick={this.handleChange(element.field)}
+        >
+          {element.label}
 
-                  <TableCell
-                    align={element.align}
-                    sortDirection={orderBy === element.field ? order : false}
-                  >
-                    <TableSortLabel
-                      active={orderBy === element.field}
-                      direction={order}
-                      onClick={this.handleChange(element.field)}
-                    >
-                      {element.label}
+        </TableSortLabel>
 
-                    </TableSortLabel>
+      </TableCell>
+    )));
+}
 
-                  </TableCell>
-                ))
-              }
+renderForTableBody = () => {
+  const {
+    columns, data, actions, classes,
+  } = this.props;
+  return (
+    data.map(row => (
+      <TableRow key={row.id} className={classes.row} hover>
+        {columns.map(column => (
+          <TableCell align={column.align} onClick={this.handleClick(row.id)} component="th" scope="row">
+            { (column.format) ? column.format(row[column.field]) : row[column.field]}
 
-            </TableRow>
+          </TableCell>
+        ))
+        }
+        <TableCell component="th" scope="row">
 
-          </TableHead>
+          { actions.map(option => (
+            <>
+              <IconButton aria-label="Delete" className={classes.forColumn} onClick={event => option.handle(event, row)}>
 
-          <TableBody>
-            {data.map(row => (
-              <TableRow key={row.id} onClick={this.handleClick(row.id)} className={classes.row} hover>
-                {columns.map(column => (
-                  <TableCell align={column.align} component="th" scope="row">
-                    { (column.format) ? column.format(row[column.field]) : row[column.field]}
-                  </TableCell>
-                ))
-                }
-              </TableRow>
+                { option.icon }
+              </IconButton>
+            </>
 
-            ))}
-          </TableBody>
-        </Table>
-      </Paper>
-    );
-  }
+          ))}
+
+        </TableCell>
+
+      </TableRow>
+
+    )));
+}
+
+render() {
+  const {
+    classes, rowsPerPage, page, count, onChangePage,
+  } = this.props;
+  return (
+    <Paper className={classes.root}>
+      <Table className={classes.table}>
+        <TableHead>
+          <TableRow>
+            {this.renderForTableHead()}
+            <TableCell />
+          </TableRow>
+
+        </TableHead>
+
+        <TableBody>
+          {this.renderForTableBody()}
+        </TableBody>
+      </Table>
+
+      <TablePagination
+        component="div"
+        count={count}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onChangePage={onChangePage}
+        rowsPerPageOptions={[]}
+      />
+    </Paper>
+  );
+}
 }
 Traineetable.propTypes = {
   classes: PropTypes.node.isRequired,
@@ -103,12 +146,20 @@ Traineetable.propTypes = {
   order: PropTypes.string,
   onSort: PropTypes.func.isRequired,
   onSelect: PropTypes.func.isRequired,
-
+  actions: PropTypes.arrayOf,
+  onChangePage: PropTypes.func.isRequired,
+  page: PropTypes.number,
+  count: PropTypes.number,
+  rowsPerPage: PropTypes.number,
 };
 
 Traineetable.defaultProps = {
   orderBy: '',
   order: 'asc',
+  actions: [],
+  page: 0,
+  count: 0,
+  rowsPerPage: 100,
 };
 
 export default withStyles(styles)(Traineetable);

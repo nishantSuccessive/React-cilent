@@ -5,6 +5,7 @@ import {
 import PropTypes from 'prop-types';
 import { TraineeList } from './TraineeList';
 import TraineeDetail from './TraineeDetail';
+import { EditTrainee } from './Components/EditTrainee';
 
 export class Trainee extends React.Component {
   constructor(props) {
@@ -20,6 +21,8 @@ export class Trainee extends React.Component {
         <Switch>
           <Route exact path={`${match.path}`} component={TraineeList} />
           <Route exact path={`${match.path}/:id`} component={TraineeDetail} />
+          <Route exact path={`${match.path}/:name`} component={EditTrainee} />
+
         </Switch>
       </div>
     );

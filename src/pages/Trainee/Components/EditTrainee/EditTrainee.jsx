@@ -7,12 +7,9 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import PropTypes from 'prop-types';
-import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import Email from '@material-ui/icons/Mail';
 import Person from '@material-ui/icons/Person';
 import * as yup from 'yup';
@@ -37,49 +34,52 @@ const schema = yup.object().shape({
     .required('Password confirm is required'),
 });
 
-class AddDialog extends React.Component {
+class EditTrainee extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      password: '',
-      showPassword: false,
-      showconfirmpassword: false,
-      fullWidth: true,
-      maxWidth: 'md',
       name: '',
       email: '',
-      confirmpassword: '',
+      fullWidth: true,
+      maxWidth: 'md',
       isTouched: {
         name: false,
         email: false,
-        password: false,
-        confirmpassword: false,
       },
       hasErrors: {
         name: false,
         email: false,
-        password: false,
-        confirmpassword: false,
       },
       error: {
         name: '',
         email: '',
-        password: '',
-        confirmpassword: '',
       },
     };
   }
 
-  handleChange = field => (event) => {
-    const { isTouched } = this.state;
-    this.setState(
-      {
-        [field]: event.target.value,
-        isTouched: { ...isTouched, [field]: true },
-      },
-      () => this.validateErrors(field),
-    );
-  };
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { data } = nextProps;
+    if ((prevState.name === data.name) || (prevState.email === data.email)) {
+      return { name: prevState.name, email: prevState.email };
+    }
+
+    return {
+      name: data.name,
+      email: data.email,
+    };
+  }
+
+
+handleChange = field => (event) => {
+  const { isTouched } = this.state;
+  this.setState(
+    {
+      [field]: event.target.value,
+      isTouched: { ...isTouched, [field]: true },
+    },
+    () => this.validateErrors(field),
+  );
+};
 
 
   forblur = (value) => {
@@ -151,91 +151,10 @@ class AddDialog extends React.Component {
     }
   };
 
-renderForGridPassword = () => {
-  const { classes } = this.props;
-  const {
-    error,
-    password,
-    showPassword,
-  } = this.state;
-  return (
-    <Grid item xs>
-      <TextField
-        error={Boolean(error.password)}
-
-        InputProps={{
-          onBlur: () => this.forblur('password'),
-          startAdornment: (
-            <InputAdornment position="start">
-              <IconButton
-                aria-label="Toggle password visibility"
-                onClick={this.handleClickShowPassword}
-              >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-        id="outlined-name"
-        label="Password"
-        type={showPassword ? 'text' : 'password'}
-        value={password}
-        className={classes.textField}
-        margin="normal"
-        variant="outlined"
-        onChange={this.handleChange('password')}
-        onBlur={() => this.forblur('password')}
-        helperText={error.password || ''}
-      />
-    </Grid>
-  );
-}
-
-renderForGridConfirmPassword = () => {
-  const { classes } = this.props;
-  const {
-    error,
-    confirmpassword,
-    showconfirmpassword,
-  } = this.state;
-  return (
-    <Grid item xs>
-      <TextField
-        error={Boolean(error.confirmpassword)}
-
-        InputProps={{
-          onBlur: () => this.forblur('confirmpassword'),
-          startAdornment: (
-            <InputAdornment position="start">
-              <IconButton
-                aria-label="Toggle password visibility"
-                onClick={this.handleClickShowConfirmPassword}
-              >
-                {showconfirmpassword ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-        id="outlined-name"
-        label="Confirm Password"
-        type={showconfirmpassword ? 'text' : 'password'}
-        value={confirmpassword}
-        onBlur={() => this.forblur('confirmpassword')}
-        helperText={error.confirmpassword || ''}
-        className={classes.textField}
-        margin="normal"
-        variant="outlined"
-        onChange={this.handleChange('confirmpassword')}
-      />
-    </Grid>
-  );
-}
-
 renderForTextFieldEmail = () => {
   const { classes } = this.props;
   const {
-    error,
-    email,
+    error, email,
   } = this.state;
   return (
     <TextField
@@ -263,17 +182,14 @@ renderForTextFieldEmail = () => {
 
 renderForTextFieldName = () => {
   const { classes } = this.props;
-  const {
-    error,
-    name,
-  } = this.state;
+  const { error, name } = this.state;
   return (
     <TextField
       error={Boolean(error.name)}
       required
       id="outlined-name"
-      label="Name"
       value={name}
+      label="Name"
       className={classes.textField}
       margin="normal"
       variant="outlined"
@@ -294,13 +210,12 @@ renderForTextFieldName = () => {
 
 
 render() {
-  const { open, onClose, classes } = this.props;
   const {
-    password,
+    open, onClose, classes,
+  } = this.props;
+  const {
     fullWidth,
-    maxWidth,
-    name,
-    email,
+    maxWidth, name, email,
   } = this.state;
   return (
     <Fragment>
@@ -311,36 +226,32 @@ render() {
         fullWidth={fullWidth}
         maxWidth={maxWidth}
       >
-        <DialogTitle id="form-dialog-title">Add Trainee</DialogTitle>
+        <DialogTitle id="form-dialog-title">Edit Trainee</DialogTitle>
         <DialogContent>
           <DialogContentText>Enter your Trainee details</DialogContentText>
           <div className={classes.root}>
             {this.renderForTextFieldName()}
             {this.renderForTextFieldEmail()}
-            <Grid container spacing={24}>
-              {this.renderForGridPassword()}
-              {this.renderForGridConfirmPassword()}
-            </Grid>
           </div>
         </DialogContent>
 
         <DialogActions>
           <Button color="primary" onClick={onClose}>Cancel</Button>
-          {(this.forErrors()) ? <Button color="primary" onClick={() => onClose(name, email, password)}>Submit</Button> : <Button disabled>Submit</Button>}
+          {(this.forErrors()) ? <Button color="primary" onClick={() => onClose(name, email)}>Submit</Button> : <Button disabled>Submit</Button>}
         </DialogActions>
       </Dialog>
     </Fragment>
   );
 }
 }
-AddDialog.propTypes = {
+EditTrainee.propTypes = {
   open: PropTypes.bool,
   onClose: PropTypes.func,
   classes: PropTypes.objectOf(PropTypes.object).isRequired,
 };
-AddDialog.defaultProps = {
+EditTrainee.defaultProps = {
   open: false,
   onClose: () => {},
 };
 
-export default withStyles(styles)(AddDialog);
+export default withStyles(styles)(EditTrainee);
