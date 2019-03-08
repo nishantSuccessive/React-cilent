@@ -15,6 +15,10 @@ import TextField from '@material-ui/core/TextField';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import classNames from 'classnames';
+import { callApi } from '../../lib/utils/api';
+import { SnackbarConsumer } from '../../contexts';
 
 const schema = yup.object().shape({
   name: yup.string().required(),
@@ -68,9 +72,7 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      password: '',
       showPassword: false,
-      email: '',
       isTouched: {
         email: false,
         password: false,
@@ -83,19 +85,24 @@ class Login extends React.Component {
         email: '',
         password: '',
       },
+      credentials: {
+        email: '',
+        password: '',
+      },
     };
   }
 
-   handleChange = field => (event) => {
-     const { isTouched } = this.state;
-     this.setState(
-       {
-         [field]: event.target.value,
-         isTouched: { ...isTouched, [field]: true },
-       },
-       () => this.validateErrors(field),
-     );
-   };
+ handleChange = field => (event) => {
+   const { isTouched, credentials } = this.state;
+   this.setState(
+     {
+       isTouched: { ...isTouched, [field]: true },
+       credentials: { ...credentials, [field]: event.target.value },
+
+     },
+     () => this.validateErrors(field),
+   );
+ };
 
 
     forblur = (value) => {
@@ -128,8 +135,10 @@ class Login extends React.Component {
       let isPresent = false;
 
       const {
-        error, email, password, hasErrors,
+        error, credentials, hasErrors,
       } = this.state;
+
+      const {  email, password } = credentials;
 
       schema
         .validate({
@@ -162,112 +171,159 @@ class Login extends React.Component {
       }
     };
 
+    handleClick = async (e, openSnackbar) => {
+      const { credentials } = this.state;
+      const { history } = this.props;
+      e.preventDefault();
+      const { loading } = this.state;
+      if (!loading) {
+        this.setState(
+          {
+            success: false,
+            loading: true,
+          },
+        );
+      }
+      const output = await callApi('post', 'user/login', credentials);
+
+      if (output.status === 200) {
+        localStorage.setItem('key', output.data.data);
+
+        this.setState(
+          {
+            loading: false,
+          },
+        );
+        history.push('/trainee');
+      } else {
+        this.setState(
+          {
+            loading: false,
+          },
+        );
+        openSnackbar('status not cleared 400', 'error');
+      }
+      console.log('output is ', output);
+    }
+
 
     render() {
       const { classes } = this.props;
       const {
         error,
-        password,
+        credentials,
         showPassword,
-        email,
+         loading,
       } = this.state;
 
       return (
-        <main className={classes.main}>
-          <CssBaseline />
-          <Paper className={classes.paper}>
-            <Avatar className={classes.avatar}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
+
+        <SnackbarConsumer>
+          {({ openSnackbar }) => (
+            <main className={classes.main}>
+              <CssBaseline />
+              <Paper className={classes.paper}>
+                <Avatar className={classes.avatar}>
+                  <LockOutlinedIcon />
+                </Avatar>
+                <Typography component="h1" variant="h5">
           Sign in
-            </Typography>
-            <form className={classes.form}>
-              <FormControl margin="normal" required fullWidth>
-                <TextField
-                  error={Boolean(error.email)}
-                  id="outlined-name"
-                  label="Email Address"
-                  className={classes.textField}
-                  margin="normal"
-                  variant="outlined"
-                  value={email}
-                  onChange={this.handleChange('email')}
-                  onBlur={() => this.forblur('email')}
-                  helperText={error.email || ''}
-                  InputProps={{
-                    onBlur: () => this.forblur('email'),
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <IconButton>{<Email />}</IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </FormControl>
-            </form>
-            <form className={classes.form}>
-              <FormControl margin="normal" required fullWidth>
-                <TextField
-                  error={Boolean(error.password)}
+                </Typography>
+                <form className={classes.form}>
+                  <FormControl margin="normal" required fullWidth>
+                    <TextField
+                      error={Boolean(error.email)}
+                      id="outlined-name"
+                      label="Email Address"
+                      className={classes.textField}
+                      margin="normal"
+                      variant="outlined"
+                      value={credentials.email}
+                      onChange={this.handleChange('email')}
+                      onBlur={() => this.forblur('email')}
+                      helperText={error.email || ''}
+                      InputProps={{
+                        onBlur: () => this.forblur('email'),
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <IconButton>{<Email />}</IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </FormControl>
+                </form>
+                <form className={classes.form}>
+                  <FormControl margin="normal" required fullWidth>
+                    <TextField
+                      error={Boolean(error.password)}
 
-                  InputProps={{
-                    onBlur: () => this.forblur('password'),
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <IconButton
-                          aria-label="Toggle password visibility"
-                          onClick={this.handleClickShowPassword}
-                        >
-                          {showPassword ? <Visibility /> : <VisibilityOff />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                  id="outlined-name"
-                  label="Password"
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  className={classes.textField}
-                  margin="normal"
-                  variant="outlined"
-                  onChange={this.handleChange('password')}
-                  onBlur={() => this.forblur('password')}
-                  helperText={error.password || ''}
-                />
-              </FormControl>
-            </form>
-            {(this.forErrors()) ? (
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-              >
-            Sign in
-              </Button>
-            ) : (
-              <Button
-                disabled
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-              >
-            Sign in
-              </Button>
-            )}
+                      InputProps={{
+                        onBlur: () => this.forblur('password'),
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <IconButton
+                              aria-label="Toggle password visibility"
+                              onClick={this.handleClickShowPassword}
+                            >
+                              {showPassword ? <Visibility /> : <VisibilityOff />}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                      id="outlined-name"
+                      label="Password"
+                      type={showPassword ? 'text' : 'password'}
+                      value={credentials.password}
+                      className={classes.textField}
+                      margin="normal"
+                      variant="outlined"
+                      onChange={this.handleChange('password')}
+                      onBlur={() => this.forblur('password')}
+                      helperText={error.password || ''}
+                    />
+                  </FormControl>
+                </form>
+                {(this.forErrors()) ? (
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    className={classes.submit}
+                    disabled={loading}
+                    onClick={e => this.handleClick(e, openSnackbar)}
+                  >
+                    {loading ? (<CircularProgress size={24} />) : 'Sign In'}
+                  </Button>
 
-          </Paper>
-        </main>
+
+                )
+                  : (
+                    <Button
+                      disabled
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                      color="primary"
+                      className={classes.submit}
+                    >
+            Sign in
+                    </Button>
+                  )}
+
+              </Paper>
+            </main>
+          )}
+        </SnackbarConsumer>
       );
     }
 }
 
 Login.propTypes = {
   classes: PropTypes.objectOf(PropTypes.object).isRequired,
+  history: PropTypes.objectOf(PropTypes.object).isRequired,
+
 };
 
 export default withStyles(styles)(Login);

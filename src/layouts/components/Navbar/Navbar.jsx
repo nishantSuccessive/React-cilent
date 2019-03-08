@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
 import { white } from 'material-ui/styles/colors';
-
+import { Redirect } from 'react-router-dom';
 
 const styles = {
   root: {
@@ -30,6 +30,13 @@ export class Navbar extends React.Component {
   constructor() {
     super();
     this.state = {};
+  }
+
+  logOutButton = () => {
+    localStorage.clear();
+    return (
+      <Redirect to="/login" />
+    );
   }
 
   render() {
@@ -67,11 +74,12 @@ export class Navbar extends React.Component {
             LOGIN
             </Button>
           </Link>
-          <Link to="/" className={classes.forLink}>
-            <Button color="inherit" className={classes.logout}>
+          <Button color="inherit" className={classes.logout} onClick={this.logOutButton()}>
+            <Link to="/login" className={classes.forLink}>
             LOGOUT
-            </Button>
-          </Link>
+            </Link>
+          </Button>
+
 
         </Toolbar>
 
