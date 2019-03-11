@@ -9,9 +9,9 @@ const AuthRoute = ({ component: Component, ...rest }) => (
   <>
     <Route
       {...rest}
-      render={() => (
+      render={matchprops => (
         <AuthLayout>
-          <Component />
+          <Component {...matchprops} />
         </AuthLayout>
       )}
     />

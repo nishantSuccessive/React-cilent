@@ -151,18 +151,152 @@ class AddDialog extends React.Component {
     }
   };
 
-  render() {
-    const { open, onClose, classes } = this.props;
+  renderForName = () => {
+    const { classes } = this.props;
+    const {
+      error,
+      name,
+    } = this.state;
+    return (
+      <TextField
+        error={Boolean(error.name)}
+        required
+        id="outlined-name"
+        label="Name"
+        value={name}
+        className={classes.textField}
+        margin="normal"
+        variant="outlined"
+        onChange={this.handleChange('name')}
+        helperText={error.name || ''}
+        InputProps={{
+          onBlur: () => this.forblur('name'),
+
+          startAdornment: (
+            <InputAdornment position="start">
+              <IconButton>{<Person />}</IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
+    );
+  }
+
+  renderForEmail = () => {
+    const { classes } = this.props;
+    const {
+      error,
+      email,
+    } = this.state;
+    return (
+      <TextField
+        error={Boolean(error.email)}
+        id="outlined-name"
+        label="Email Address"
+        className={classes.textField}
+        margin="normal"
+        variant="outlined"
+        value={email}
+        onChange={this.handleChange('email')}
+        onBlur={() => this.forblur('email')}
+        helperText={error.email || ''}
+        InputProps={{
+          onBlur: () => this.forblur('email'),
+          startAdornment: (
+            <InputAdornment position="start">
+              <IconButton>{<Email />}</IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
+
+    );
+  }
+
+  renderForPassword = () => {
+    const { classes } = this.props;
     const {
       error,
       password,
       showPassword,
+    } = this.state;
+    return (
+      <TextField
+        error={Boolean(error.password)}
+
+        InputProps={{
+          onBlur: () => this.forblur('password'),
+          startAdornment: (
+            <InputAdornment position="start">
+              <IconButton
+                aria-label="Toggle password visibility"
+                onClick={this.handleClickShowPassword}
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+        id="outlined-name"
+        label="Password"
+        type={showPassword ? 'text' : 'password'}
+        value={password}
+        className={classes.textField}
+        margin="normal"
+        variant="outlined"
+        onChange={this.handleChange('password')}
+        onBlur={() => this.forblur('password')}
+        helperText={error.password || ''}
+      />
+    );
+  }
+
+  renderForConfirmPassword = () => {
+    const { classes } = this.props;
+    const {
+      error,
+      confirmpassword,
+      showconfirmpassword,
+    } = this.state;
+    return (
+      <TextField
+        error={Boolean(error.confirmpassword)}
+
+        InputProps={{
+          onBlur: () => this.forblur('confirmpassword'),
+          startAdornment: (
+            <InputAdornment position="start">
+              <IconButton
+                aria-label="Toggle password visibility"
+                onClick={this.handleClickShowConfirmPassword}
+              >
+                {showconfirmpassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+        id="outlined-name"
+        label="Confirm Password"
+        type={showconfirmpassword ? 'text' : 'password'}
+        value={confirmpassword}
+        onBlur={() => this.forblur('confirmpassword')}
+        helperText={error.confirmpassword || ''}
+        className={classes.textField}
+        margin="normal"
+        variant="outlined"
+        onChange={this.handleChange('confirmpassword')}
+      />
+    );
+  }
+
+  render() {
+    const { open, onClose, classes } = this.props;
+    const {
+      password,
       fullWidth,
       maxWidth,
       name,
       email,
-      confirmpassword,
-      showconfirmpassword,
     } = this.state;
     return (
       <Fragment>
@@ -177,107 +311,15 @@ class AddDialog extends React.Component {
           <DialogContent>
             <DialogContentText>Enter your Trainee details</DialogContentText>
             <div className={classes.root}>
-              <TextField
-                error={Boolean(error.name)}
-                required
-                id="outlined-name"
-                label="Name"
-                value={name}
-                className={classes.textField}
-                margin="normal"
-                variant="outlined"
-                onChange={this.handleChange('name')}
-                helperText={error.name || ''}
-                InputProps={{
-                  onBlur: () => this.forblur('name'),
+              { this.renderForName() }
 
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <IconButton>{<Person />}</IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-
-              <TextField
-                error={Boolean(error.email)}
-                id="outlined-name"
-                label="Email Address"
-                className={classes.textField}
-                margin="normal"
-                variant="outlined"
-                value={email}
-                onChange={this.handleChange('email')}
-                onBlur={() => this.forblur('email')}
-                helperText={error.email || ''}
-                InputProps={{
-                  onBlur: () => this.forblur('email'),
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <IconButton>{<Email />}</IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-
+              { this.renderForEmail() }
               <Grid container spacing={24}>
                 <Grid item xs>
-                  <TextField
-                    error={Boolean(error.password)}
-
-                    InputProps={{
-                      onBlur: () => this.forblur('password'),
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <IconButton
-                            aria-label="Toggle password visibility"
-                            onClick={this.handleClickShowPassword}
-                          >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                    id="outlined-name"
-                    label="Password"
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    className={classes.textField}
-                    margin="normal"
-                    variant="outlined"
-                    onChange={this.handleChange('password')}
-                    onBlur={() => this.forblur('password')}
-                    helperText={error.password || ''}
-                  />
+                  { this.renderForPassword() }
                 </Grid>
                 <Grid item xs>
-                  <TextField
-                    error={Boolean(error.confirmpassword)}
-
-                    InputProps={{
-                      onBlur: () => this.forblur('confirmpassword'),
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <IconButton
-                            aria-label="Toggle password visibility"
-                            onClick={this.handleClickShowConfirmPassword}
-                          >
-                            {showconfirmpassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                    id="outlined-name"
-                    label="Confirm Password"
-                    type={showconfirmpassword ? 'text' : 'password'}
-                    value={confirmpassword}
-                    onBlur={() => this.forblur('confirmpassword')}
-                    helperText={error.confirmpassword || ''}
-                    className={classes.textField}
-                    margin="normal"
-                    variant="outlined"
-                    onChange={this.handleChange('confirmpassword')}
-                  />
+                  { this.renderForConfirmPassword() }
                 </Grid>
               </Grid>
             </div>
