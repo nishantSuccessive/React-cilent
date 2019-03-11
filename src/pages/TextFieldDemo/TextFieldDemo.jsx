@@ -1,6 +1,6 @@
 import React from 'react';
 import { Field, Slider } from '../../components';
-import { styling } from '../../components/TextField';
+import { styling } from './style';
 import { PUBLIC_IMAGE_FOLDER } from '../../configs/constants';
 
 class TextFieldDemo extends React.Component {
@@ -27,7 +27,7 @@ class TextFieldDemo extends React.Component {
         />
         <Field name="Accessible" setText="Input is accessible" />
         <Field name="101" id="3" setText="input is having errors" />
-        <Field style={styling.textColor} setText="Could not be greater than" />
+        <Field style={styling.textColor} id="4" setText="Could not be greater than" />
       </div>
     );
   }

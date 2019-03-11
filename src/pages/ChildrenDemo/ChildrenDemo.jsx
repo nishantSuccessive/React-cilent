@@ -8,6 +8,16 @@ export class ChildrenDemo extends React.Component {
     this.state = this.props;
   }
 
+  templateForMath = (first, operator, second, result) => (
+    <h4>
+      {first}
+      {operator}
+      {second}
+      {'='}
+      {result}
+    </h4>
+  )
+
   render() {
     return (
       <div>
@@ -17,13 +27,7 @@ export class ChildrenDemo extends React.Component {
           second={9}
         >
           {(first, operator, second, result) => (
-            <h4>
-              {first}
-              {operator}
-              {second}
-              {'='}
-              {result}
-            </h4>
+            this.templateForMath(first, operator, second, result)
           )
           }
         </Math>
@@ -33,13 +37,8 @@ export class ChildrenDemo extends React.Component {
           second={0}
         >
           {(first, operator, second, result) => (
-            <h4>
-              {first}
-              {operator}
-              {second}
-              {'='}
-              {result}
-            </h4>
+            this.templateForMath(first, operator, second, result)
+
           )
           }
         </Math>
@@ -49,13 +48,8 @@ export class ChildrenDemo extends React.Component {
           second={9}
         >
           {(first, operator, second, result) => (
-            <h4>
-              {first}
-              {operator}
-              {second}
-              {'='}
-              {result}
-            </h4>
+            this.templateForMath(first, operator, second, result)
+
           )
           }
         </Math>
@@ -65,13 +59,8 @@ export class ChildrenDemo extends React.Component {
           second={9}
         >
           {(first, operator, second, result) => (
-            <h4>
-              {first}
-              {operator}
-              {second}
-              {'='}
-              {result}
-            </h4>
+            this.templateForMath(first, operator, second, result)
+
           )
           }
         </Math>
@@ -81,13 +70,8 @@ export class ChildrenDemo extends React.Component {
           second={9}
         >
           {(first, operator, second, result) => (
-            <h4>
-              {first}
-              {operator}
-              {second}
-              {'='}
-              {result}
-            </h4>
+            this.templateForMath(first, operator, second, result)
+
           )
           }
         </Math>
@@ -97,13 +81,8 @@ export class ChildrenDemo extends React.Component {
           second={9}
         >
           {(first, operator, second, result) => (
-            <h4>
-              {first}
-              {operator}
-              {second}
-              {'='}
-              {result}
-            </h4>
+            this.templateForMath(first, operator, second, result)
+
           )
           }
         </Math>

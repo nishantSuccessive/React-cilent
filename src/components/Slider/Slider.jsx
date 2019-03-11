@@ -35,10 +35,7 @@ export class Slider extends React.Component {
       alt, banners, defaultBanner, height, random, ...rest
     } = this.props;
     const { index } = this.state;
-    console.log(banners, index);
-
     const imgValue = banners ? banners[index] : defaultBanner;
-    console.log(imgValue);
     return (
       <div>
         <img src={imgValue} height={height} alt={alt} {...rest} />

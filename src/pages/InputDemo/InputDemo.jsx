@@ -4,8 +4,7 @@ import {
   NewText, RadioGroup, SelectField, Button,
 } from '../../components/index';
 import { DropDownValues, Cricket, Football } from '../../configs/constants';
-import { styleForButton } from '../../components/Button';
-import { styleForTextField } from '../../components/NewText';
+import { styleForButton, styleForTextField } from './style';
 
 const schema = yup.object().shape({
   name: yup.string().required(),
@@ -35,12 +34,20 @@ export class InputDemo extends React.Component {
     };
   }
 
-  handleChange = Field => (event) => {
+  handleChange = field => (event) => {
     const { isTouched } = this.state;
-    this.setState({
-      [Field]: event.target.value,
-      isTouched: { ...isTouched, [Field]: true },
-    }, this.Validate(Field));
+    if (field === 'sport') {
+      this.setState({
+        [field]: event.target.value,
+        radio: '',
+        isTouched: { ...isTouched, radio: false, [field]: true },
+      }, () => this.validateErrors(field));
+    } else {
+      this.setState({
+        [field]: event.target.value,
+        isTouched: { ...isTouched, [field]: true },
+      }, () => this.validateErrors(field));
+    }
   };
 
 forErrors = () => {
@@ -58,10 +65,10 @@ forErrors = () => {
 }
 
 forblur = (value) => {
-  this.Validate(value);
+  this.validateErrors(value);
 }
 
-Validate = (value) => {
+validateErrors = (value) => {
   let isPresent = false;
   const {
     error, name, sport, radio, hasErrors,
@@ -107,7 +114,7 @@ render() {
   }
   return (
     <div>
-      <h3>Name</h3>
+      <h3>Name </h3>
       <NewText
         value={name}
         onChange={this.handleChange('name')}
