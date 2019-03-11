@@ -4,3 +4,4 @@ export { ChildrenDemo } from './ChildrenDemo';
 export { Trainee } from './Trainee';
 export { Login } from './Login';
 export { NoMatch } from './Nomatch';
+export { rows } from '../configs';

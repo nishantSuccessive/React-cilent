@@ -12,7 +12,7 @@ export const Field = (props) => {
         (id === '4')
           ? (
             <div>
-              <h4>
+              <h4 {...rest}>
                 {setText}
               </h4>
             </div>

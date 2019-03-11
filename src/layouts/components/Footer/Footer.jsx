@@ -23,7 +23,7 @@ class Footer extends React.Component {
   render() {
     return (
       <>
-        <footer style={styleForFoot.base}> ⓒSuccessive technologies </footer>
+        <footer style={styleForFoot.base}> &copy; Successive Technologies </footer>
       </>
     );
   }
