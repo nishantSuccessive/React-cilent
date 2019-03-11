@@ -74,7 +74,7 @@ export class Navbar extends React.Component {
             LOGIN
             </Button>
           </Link>
-          <Button color="inherit" className={classes.logout} onClick={this.logOutButton()}>
+          <Button color="inherit" className={classes.logout} onClick={this.logOutButton}>
             <Link to="/login" className={classes.forLink}>
             LOGOUT
             </Link>

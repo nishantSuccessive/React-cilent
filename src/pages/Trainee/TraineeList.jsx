@@ -13,6 +13,7 @@ import { styleForButton } from './style';
 import TraineeTable from './Components/TraineeTable/TraineeTable';
 import { EditTrainee } from './Components/EditTrainee';
 import { AlertDialogSlide } from './Components/AlertDialogSlide';
+import { callApi } from '../../lib/utils/api';
 
 
 export class TraineeList extends React.Component {
@@ -27,6 +28,10 @@ export class TraineeList extends React.Component {
       page: 0,
       rowsPerPage: 10,
       user: '',
+      dataList: '',
+      skip: 0,
+      limit: 10,
+      loading: true,
     };
   }
 
@@ -56,22 +61,24 @@ export class TraineeList extends React.Component {
     return formattedDate;
   }
 
-  handleClose = (name, email, password) => {
+  handleClose = (data) => {
     this.setState({
       open: false,
       editTrainee: false,
     });
-    console.log(name, email, password);
+    console.log(data.name, data.email, data.password);
   };
 
   handleCloseEditTrainee = (name, email) => {
-    this.setState({ open: false, editTrainee: false, user: '' });
+    this.setState({ open: false, editTrainee: false, user: '', name, email });
     console.log('Edit trainee', name, email);
+        this.handleChangePage();
   };
 
-  handleCloseDeleteTrainee = (data) => {
-    console.log('Deleted trainee', data);
-    this.setState({ open: false, deleteTrainee: false, user: '' });
+  handleCloseDeleteTrainee = () => {
+    this.setState({ open: false, deleteTrainee: false, user: '',                                                                                                                                                                });
+    this.handleChangePage();
+
   };
 
   handleSelect = (event, property) => {
@@ -80,15 +87,29 @@ export class TraineeList extends React.Component {
   };
 
 
-  handleChangePage = (event, page) => {
-    this.setState({ page });
+  handleChangePage = (e, pages) => {
+    const newskip =  10 * (pages+1);
+    const newlimit =  10 ;
+    this.setState({ page: pages, skip: newskip , limit: newlimit })
+    callApi('get', `trainee?limit=${newlimit}&skip=${newskip}`, {}).then((res)=>{ console.log("response",res.data.data);this.setState({ dataList: res.data.data.records });});
+
+
   };
 
+  componentDidMount() {
+    const {
+    skip, limit,
+    } = this.state;
+    callApi('get', `trainee?limit=${limit}&skip=${skip}`, {}).then((res)=>{ console.log("response",res.data.data);this.setState({ dataList: res.data.data.records, loading: false });});
+
+  }
 
   render() {
+
     const {
-      open, fullWidth, maxWidth, order, orderBy, rowsPerPage, page, editTrainee, deleteTrainee, user,
+      open, fullWidth, maxWidth, order, orderBy, rowsPerPage, page, editTrainee, deleteTrainee, user, dataList, loading,
     } = this.state;
+
     const items = trainees.map(item => <li><Link to={`/trainee/${item.id}`}>{item.name}</Link></li>);
     return (
       <div>
@@ -118,7 +139,7 @@ export class TraineeList extends React.Component {
         />
 
         <TraineeTable
-          data={trainees}
+          data={dataList || trainees}
           columns={[{
             field: 'name',
             label: 'Name',
@@ -135,6 +156,8 @@ export class TraineeList extends React.Component {
             format: this.getDateFormatted,
           },
           ]}
+          loading={loading}
+          dataLength={dataList.count}
           actions={[
             {
               icon: <EditIcon />,

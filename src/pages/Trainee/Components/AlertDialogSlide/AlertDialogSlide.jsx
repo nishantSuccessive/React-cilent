@@ -8,6 +8,9 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import PropTypes, { object } from 'prop-types';
 import moment from 'moment';
 import { SnackbarConsumer } from '../../../../contexts';
+import { callApi } from '../../../../lib/utils/api';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 
 export class AlertDialogSlide extends React.Component {
   state = {
@@ -15,8 +18,47 @@ export class AlertDialogSlide extends React.Component {
     maxWidth: 'md',
   };
 
-  renderForButton = () => {
+  handleClick = async (e, openSnackbar) => {
     const { onClose, data } = this.props;
+    const { _id } = data;
+    e.preventDefault();
+    const { loading } = this.state;
+    if (!loading) {
+      this.setState(
+        {
+          success: false,
+          loading: true,
+        },
+      );
+    }
+    console.log(localStorage.getItem('key'))
+
+    const output = await callApi('delete', `trainee/:${_id}`, {});
+
+    if (output.status === 200) {
+
+      this.setState(
+        {
+          loading: false,
+        },
+      );
+      onClose();
+      openSnackbar('successivefully deleted', 'success');
+
+    } else {
+      this.setState(
+        {
+          loading: false,
+        },
+      );
+      openSnackbar('status not cleared 400', 'error');
+    }
+    console.log('output is ', output);
+  }
+
+
+  renderForButton = () => {
+    const { onClose, data, loading } = this.props;
     const date = moment('2019-02-14');
     return (
 
@@ -27,18 +69,14 @@ export class AlertDialogSlide extends React.Component {
       Disagree
             </Button>
             <Button
-              onClick={() => {
-                onClose(data);
-                if (moment(data.createdAt) < date) {
-                  openSnackbar('Unable to Delete the trainee!', 'error');
-                } else {
-                  openSnackbar('Deleted the trainee!', 'success');
-                }
-              }}
-              color="primary"
+              onClick={
+              (moment(data.createdAt) < date) ?
+                  openSnackbar('Unable to Delete the trainee!', 'error') : e => this.handleClick(e, openSnackbar)
+              }
+             color="primary"
               autoFocus
             >
-      Agree
+      { loading ? (<CircularProgress size={24} />) : 'Agree'}
             </Button>
           </>
         )}

@@ -16,7 +16,6 @@ import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import classNames from 'classnames';
 import { callApi } from '../../lib/utils/api';
 import { SnackbarConsumer } from '../../contexts';
 
@@ -195,6 +194,9 @@ class Login extends React.Component {
           },
         );
         history.push('/trainee');
+        const outputGet = await callApi('get', 'trainee', {});
+        console.log('output is ', outputGet);
+
       } else {
         this.setState(
           {
@@ -204,6 +206,7 @@ class Login extends React.Component {
         openSnackbar('status not cleared 400', 'error');
       }
       console.log('output is ', output);
+
     }
 
 

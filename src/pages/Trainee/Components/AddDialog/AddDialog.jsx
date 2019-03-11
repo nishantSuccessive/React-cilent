@@ -16,6 +16,10 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import Email from '@material-ui/icons/Mail';
 import Person from '@material-ui/icons/Person';
 import * as yup from 'yup';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { SnackbarConsumer } from '../../../../contexts';
+import { callApi } from '../../../../lib/utils/api';
+
 
 const styles = () => ({
   root: {
@@ -41,13 +45,10 @@ class AddDialog extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      password: '',
       showPassword: false,
       showconfirmpassword: false,
       fullWidth: true,
       maxWidth: 'md',
-      name: '',
-      email: '',
       confirmpassword: '',
       isTouched: {
         name: false,
@@ -67,15 +68,23 @@ class AddDialog extends React.Component {
         password: '',
         confirmpassword: '',
       },
+        credentials: {
+          name: '',
+          email: '',
+          password: '',
+        },
+
     };
   }
 
   handleChange = field => (event) => {
-    const { isTouched } = this.state;
+    const { isTouched, credentials } = this.state;
     this.setState(
       {
         [field]: event.target.value,
         isTouched: { ...isTouched, [field]: true },
+        credentials: { ...credentials, [field]: event.target.value },
+
       },
       () => this.validateErrors(field),
     );
@@ -112,9 +121,9 @@ class AddDialog extends React.Component {
     let isPresent = false;
 
     const {
-      error, name, email, password, confirmpassword, hasErrors,
+      error, credentials, confirmpassword, hasErrors,
     } = this.state;
-
+const { name, email, password } = credentials;
     schema
       .validate({
         name, email, password, confirmpassword,
@@ -151,11 +160,50 @@ class AddDialog extends React.Component {
     }
   };
 
+
+  handleClick = async (e, openSnackbar) => {
+    const { credentials } = this.state;
+    const { onClose } = this.props;
+    e.preventDefault();
+    const { loading } = this.state;
+    if (!loading) {
+      this.setState(
+        {
+          success: false,
+          loading: true,
+        },
+      );
+    }
+    console.log(localStorage.getItem('key'))
+
+    const output = await callApi('post', 'trainee', credentials);
+
+    if (output.status === 200) {
+
+      this.setState(
+        {
+          loading: false,
+        },
+      );
+      onClose(credentials);
+      openSnackbar('successivefully created', 'success');
+
+    } else {
+      this.setState(
+        {
+          loading: false,
+        },
+      );
+      openSnackbar('status not cleared 400', 'error');
+    }
+    console.log('output is ', output);
+  }
+
   renderForName = () => {
     const { classes } = this.props;
     const {
       error,
-      name,
+      credentials
     } = this.state;
     return (
       <TextField
@@ -163,7 +211,7 @@ class AddDialog extends React.Component {
         required
         id="outlined-name"
         label="Name"
-        value={name}
+        value={credentials.name}
         className={classes.textField}
         margin="normal"
         variant="outlined"
@@ -186,7 +234,7 @@ class AddDialog extends React.Component {
     const { classes } = this.props;
     const {
       error,
-      email,
+      credentials,
     } = this.state;
     return (
       <TextField
@@ -196,7 +244,7 @@ class AddDialog extends React.Component {
         className={classes.textField}
         margin="normal"
         variant="outlined"
-        value={email}
+        value={credentials.email}
         onChange={this.handleChange('email')}
         onBlur={() => this.forblur('email')}
         helperText={error.email || ''}
@@ -217,7 +265,7 @@ class AddDialog extends React.Component {
     const { classes } = this.props;
     const {
       error,
-      password,
+      credentials,
       showPassword,
     } = this.state;
     return (
@@ -240,7 +288,7 @@ class AddDialog extends React.Component {
         id="outlined-name"
         label="Password"
         type={showPassword ? 'text' : 'password'}
-        value={password}
+        value={credentials.password}
         className={classes.textField}
         margin="normal"
         variant="outlined"
@@ -296,9 +344,11 @@ class AddDialog extends React.Component {
       fullWidth,
       maxWidth,
       name,
-      email,
+      email, loading,
     } = this.state;
     return (
+      <SnackbarConsumer>
+      {({ openSnackbar }) => (
       <Fragment>
         <Dialog
           keepMounted
@@ -327,10 +377,18 @@ class AddDialog extends React.Component {
 
           <DialogActions>
             <Button color="primary" onClick={onClose}>Cancel</Button>
-            {(this.forErrors()) ? <Button color="primary" onClick={() => onClose(name, email, password)}>Submit</Button> : <Button disabled>Submit</Button>}
+            {(this.forErrors()) ? (
+             <Button color="primary" disabled={loading}
+               onClick={e => this.handleClick(e, openSnackbar)} >
+                   { loading ? (<CircularProgress size={24} />) : 'Submit'}
+                    </Button>
+                    ):
+            <Button disabled>Submit</Button>}
           </DialogActions>
         </Dialog>
       </Fragment>
+      )}
+      </SnackbarConsumer>
     );
   }
 }

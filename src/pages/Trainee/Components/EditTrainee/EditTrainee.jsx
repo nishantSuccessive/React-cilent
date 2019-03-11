@@ -14,6 +14,9 @@ import Email from '@material-ui/icons/Mail';
 import Person from '@material-ui/icons/Person';
 import * as yup from 'yup';
 import { SnackbarConsumer } from '../../../../contexts';
+import { callApi } from '../../../../lib/utils/api';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 
 const styles = () => ({
   root: {
@@ -55,23 +58,71 @@ class EditTrainee extends React.Component {
         name: '',
         email: '',
       },
+      error: {
+        name: '',
+        email: '',
+      },
     };
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
+    console.log("calling set derived state mthod!!!!!!!!!!")
     const { data } = nextProps;
+    if((prevState.name !== '') || (prevState.email !== '')) {
     if ((prevState.name === data.name) || (prevState.email === data.email)) {
       return { name: prevState.name, email: prevState.email };
     }
-
+  }
     return {
       name: data.name,
       email: data.email,
     };
   }
 
+  handleClick = async (e, openSnackbar) => {
+    console.log("Calling handle click!!!!!!!!!!!")
+    const { name, email } = this.state;
+    const { onClose, data } = this.props;
+    e.preventDefault();
+    const { loading } = this.state;
+    if (!loading) {
+      this.setState(
+        {
+          success: false,
+          loading: true,
+        },
+      );
+    }
+    console.log(localStorage.getItem('key'))
+
+    const output = await callApi('put', 'trainee', {id: data._id, name: name, email: email});
+
+    if (output.status === 200) {
+
+      this.setState(
+        {
+          loading: false,
+          name,
+          email,
+        },
+      );
+      onClose({name, email});
+      openSnackbar('successivefully created', 'success');
+
+    } else {
+      this.setState(
+        {
+          loading: false,
+        },
+      );
+      openSnackbar('status not cleared 400', 'error');
+    }
+    console.log('output is ', output);
+  }
+
 
 handleChange = field => (event) => {
+  console.log("calling handle change")
   const { isTouched } = this.state;
   this.setState(
     {
@@ -211,12 +262,13 @@ renderForTextFieldName = () => {
 
 
 render() {
+  console.log("calling render")
   const {
     open, onClose, classes,
   } = this.props;
   const {
     fullWidth,
-    maxWidth, name, email,
+    maxWidth, loading,
   } = this.state;
   return (
     <Fragment>
@@ -240,7 +292,7 @@ render() {
 
             <DialogActions>
               <Button color="primary" onClick={onClose}>Cancel</Button>
-              {(this.forErrors()) ? <Button color="primary" onClick={() => { onClose(name, email); openSnackbar('Successfully updated the trainee!', 'success'); }}> Submit </Button> : <Button disabled>Submit</Button>}
+              {(this.forErrors()) ? <Button color="primary" onClick={e => this.handleClick(e, openSnackbar)}>  { loading ? (<CircularProgress size={24} />) : 'Submit'} </Button> : <Button disabled>Submit</Button>}
             </DialogActions>
           </Dialog>
 

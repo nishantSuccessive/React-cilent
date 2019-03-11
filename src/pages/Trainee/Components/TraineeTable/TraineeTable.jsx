@@ -10,6 +10,7 @@ import Paper from '@material-ui/core/Paper';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import IconButton from '@material-ui/core/IconButton';
 import TablePagination from '@material-ui/core/TablePagination';
+import withLoaderAndMessage from '../../../../components/HOC/withLoaderAndMessage';
 
 const styles = theme => ({
   root: {
@@ -155,4 +156,4 @@ Traineetable.defaultProps = {
   count: 0,
   rowsPerPage: 100,
 };
-export default withStyles(styles)(Traineetable);
+export default withStyles(styles)(withLoaderAndMessage(Traineetable));
