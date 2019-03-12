@@ -14,6 +14,7 @@ import TraineeTable from './Components/TraineeTable/TraineeTable';
 import { EditTrainee } from './Components/EditTrainee';
 import { AlertDialogSlide } from './Components/AlertDialogSlide';
 import { callApi } from '../../lib/utils/api';
+import { SnackbarConsumer } from '../../contexts';
 
 
 export class TraineeList extends React.Component {
@@ -32,6 +33,8 @@ export class TraineeList extends React.Component {
       skip: 0,
       limit: 10,
       loading: true,
+      error: '',
+      totalData: '',
     };
   }
 
@@ -61,7 +64,7 @@ export class TraineeList extends React.Component {
     return formattedDate;
   }
 
-  handleClose = (data) => {
+  dialogHandleSubmit = (data) => {
     this.setState({
       open: false,
       editTrainee: false,
@@ -69,18 +72,38 @@ export class TraineeList extends React.Component {
     console.log(data.name, data.email, data.password);
   };
 
-  handleCloseEditTrainee = (name, email) => {
+  dialogHandleCancel = () => {
+    this.setState({
+      open: false,
+      editTrainee: false,
+    });
+  }
+
+  editHandleSubmit = (name, email) => {
     this.setState({ open: false, editTrainee: false, user: '', name, email });
     console.log('Edit trainee', name, email);
         this.handleChangePage();
   };
 
-  handleCloseDeleteTrainee = () => {
-    this.setState({ open: false, deleteTrainee: false, user: '',                                                                                                                                                                });
+  editHandleCancel = () => {
+    this.setState({
+      open: false,
+      editTrainee: false,
+    });
+  }
+
+  deleteHandleSubmit = () => {
+    this.setState({ open: false, deleteTrainee: false, user: ''});
     this.handleChangePage();
+};
 
-  };
 
+deleteHandleCancel = () => {
+  this.setState({
+    open: false,
+    deleteTrainee: false,
+  });
+}
   handleSelect = (event, property) => {
     const { history } = this.props;
     history.replace(`/trainee/${property}`);
@@ -88,10 +111,10 @@ export class TraineeList extends React.Component {
 
 
   handleChangePage = (e, pages) => {
-    const newskip =  10 * (pages+1);
+    const newskip =  10 * (pages);
     const newlimit =  10 ;
-    this.setState({ page: pages, skip: newskip , limit: newlimit })
-    callApi('get', `trainee?limit=${newlimit}&skip=${newskip}`, {}).then((res)=>{ console.log("response",res.data.data);this.setState({ dataList: res.data.data.records });});
+    this.setState({ page: pages, skip: newskip , limit: newlimit, loading: true })
+    callApi('get', `trainee?limit=${newlimit}&skip=${newskip}`, {}).then((res)=>{this.setState({ dataList: res.data.data.records, loading: false });});
 
 
   };
@@ -100,43 +123,57 @@ export class TraineeList extends React.Component {
     const {
     skip, limit,
     } = this.state;
-    callApi('get', `trainee?limit=${limit}&skip=${skip}`, {}).then((res)=>{ console.log("response",res.data.data);this.setState({ dataList: res.data.data.records, loading: false });});
+    callApi('get', `trainee?limit=${limit}&skip=${skip}`, {}).then((res)=>{this.setState({ dataList: res.data.data.records, loading: false, totalData: res.data.data.count });}).catch((err)=>{this.setState({error: err, loading: false})});
 
+  }
+  handleSnackbar = (openSnackbar) => {
+    openSnackbar("Wrong api call", "error")
+    this.setState({error: ''})
   }
 
   render() {
 
     const {
-      open, fullWidth, maxWidth, order, orderBy, rowsPerPage, page, editTrainee, deleteTrainee, user, dataList, loading,
+      open, fullWidth, maxWidth, order, orderBy, rowsPerPage, page, editTrainee, deleteTrainee, user, error, dataList, loading, totalData,
     } = this.state;
 
-    const items = trainees.map(item => <li><Link to={`/trainee/${item.id}`}>{item.name}</Link></li>);
     return (
+      <SnackbarConsumer>
+      {({ openSnackbar }) => {
+        if(!error) {
+          return (
       <div>
         <Button variant="outlined" style={styleForButton.base} color="primary" onClick={this.handleClickOpen}>
           Add Trainee
         </Button>
         <AddDialog
           open={open}
-          onClose={this.handleClose}
+          onSubmit={this.dialogHandleSubmit}
           fullWidth={fullWidth}
           maxWidth={maxWidth}
+          onCancel={this.dialogHandleCancel}
+          openSnackbar={openSnackbar}
         />
         <EditTrainee
           open={editTrainee}
-          onClose={this.handleCloseEditTrainee}
+          onSubmit={this.editHandleSubmit}
           fullWidth={fullWidth}
           maxWidth={maxWidth}
           data={user}
+          onCancel={this.editHandleCancel}
+          openSnackbar={openSnackbar}
+
         />
 
         <AlertDialogSlide
           open={deleteTrainee}
-          onClose={this.handleCloseDeleteTrainee}
+          onSubmit={this.deleteHandleSubmit}
           fullWidth={fullWidth}
           maxWidth={maxWidth}
           data={user}
-        />
+          onCancel={this.deleteHandleCancel}
+          openSnackbar={openSnackbar}
+         />
 
         <TraineeTable
           data={dataList || trainees}
@@ -157,7 +194,7 @@ export class TraineeList extends React.Component {
           },
           ]}
           loading={loading}
-          dataLength={dataList.count}
+          dataLength={dataList.length}
           actions={[
             {
               icon: <EditIcon />,
@@ -169,21 +206,21 @@ export class TraineeList extends React.Component {
 
             },
           ]}
+          error={error}
           orderBy={orderBy}
           order={order}
           onSort={this.handleSort}
           onSelect={this.handleSelect}
-          count={100}
+          count={totalData}
           onChangePage={this.handleChangePage}
           page={page}
           rowsPerPage={rowsPerPage}
         />
-        <div>
-          <ul>
-            {items}
-          </ul>
-        </div>
-      </div>
+      </div>)
+         }
+         return this.handleSnackbar(openSnackbar)
+         } }
+              </SnackbarConsumer>
     );
   }
 }
