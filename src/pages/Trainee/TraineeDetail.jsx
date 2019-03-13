@@ -10,7 +10,8 @@ import {
   Link,
 } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
-import { trainees } from './data';
+import { callApi } from '../../lib/utils/api';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 
 const styles = theme => ({
@@ -53,27 +54,30 @@ const styles = theme => ({
 class TraineeDetail extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+
+    this.state = { dataList: '', loading: true,
   }
+     }
 
   getDateFormatted = (value) => {
     const formattedDate = moment(value).format('dddd, MMMM Do YYYY, h:mm:ss ');
     return formattedDate;
   }
 
-  render() {
-    const { classes, match } = this.props;
+
+  componentDidMount() {
+    const { match } = this.props;
     const { params } = match;
-    let Name;
-    let Email;
-    let newDate;
-    trainees.forEach((element) => {
-      if (element.id === params.id) {
-        Name = element.name;
-        Email = element.email;
-        newDate = this.getDateFormatted(element.createdAt);
-      }
-    });
+    callApi('get', `trainee`, {}).then((res)=> res.data.data.records.forEach((element) => {
+      if (element._id === params.id) {
+        this.setState({ dataList: element });
+      }}))
+  }
+
+  render() {
+    const { classes } = this.props;
+      const { dataList } = this.state;
+      if(dataList) {
     return (
       <div>
         <Card className={classes.card}>
@@ -85,13 +89,13 @@ class TraineeDetail extends React.Component {
 
             <CardContent className={classes.content}>
               <Typography component="h5" variant="h5">
-                {Name}
+                {dataList.name}
               </Typography>
               <Typography variant="subtitle1" color="textSecondary">
-                {newDate}
+                {dataList.createdAt}
               </Typography>
               <Typography component="h5" variant="h5">
-                {Email}
+                {dataList.email}
               </Typography>
             </CardContent>
           </div>
@@ -105,6 +109,11 @@ class TraineeDetail extends React.Component {
         </div>
       </div>
     );
+      }
+      return (
+<div style={{ textAlign: "center", marginTop: '50px' }}>
+            <CircularProgress />
+          </div>      )
   }
 }
 TraineeDetail.propTypes = {

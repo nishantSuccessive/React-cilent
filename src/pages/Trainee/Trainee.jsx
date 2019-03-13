@@ -19,7 +19,7 @@ export class Trainee extends React.Component {
       <div>
         <Switch>
           <Route exact path={`${match.path}`} component={TraineeList} />
-          <Route exact path={`${match.path}/:id`} component={TraineeDetail} />
+          <Route exact path={`${match.path}/id`} component={TraineeDetail} />
         </Switch>
       </div>
     );

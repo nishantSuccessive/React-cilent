@@ -15,6 +15,7 @@ import { EditTrainee } from './Components/EditTrainee';
 import { AlertDialogSlide } from './Components/AlertDialogSlide';
 import { callApi } from '../../lib/utils/api';
 import { SnackbarConsumer } from '../../contexts';
+import TraineeDetail from './TraineeDetail';
 
 
 export class TraineeList extends React.Component {
@@ -30,11 +31,11 @@ export class TraineeList extends React.Component {
       rowsPerPage: 10,
       user: '',
       dataList: '',
-      skip: 0,
-      limit: 10,
       loading: true,
       error: '',
       totalData: '',
+      skip: 0,
+      limit: 10
     };
   }
 
@@ -69,6 +70,7 @@ export class TraineeList extends React.Component {
       open: false,
       editTrainee: false,
     });
+    this.handleCallApi();
     console.log(data.name, data.email, data.password);
   };
 
@@ -82,7 +84,7 @@ export class TraineeList extends React.Component {
   editHandleSubmit = (name, email) => {
     this.setState({ open: false, editTrainee: false, user: '', name, email });
     console.log('Edit trainee', name, email);
-        this.handleChangePage();
+        this.handleCallApi();
   };
 
   editHandleCancel = () => {
@@ -94,7 +96,7 @@ export class TraineeList extends React.Component {
 
   deleteHandleSubmit = () => {
     this.setState({ open: false, deleteTrainee: false, user: ''});
-    this.handleChangePage();
+    this.handleCallApi();
 };
 
 
@@ -111,19 +113,40 @@ deleteHandleCancel = () => {
 
 
   handleChangePage = (e, pages) => {
+    const { page } = this.state;
     const newskip =  10 * (pages);
     const newlimit =  10 ;
-    this.setState({ page: pages, skip: newskip , limit: newlimit, loading: true })
-    callApi('get', `trainee?limit=${newlimit}&skip=${newskip}`, {}).then((res)=>{this.setState({ dataList: res.data.data.records, loading: false });});
+    this.setState({ page: pages, loading: true })
+    callApi('get', `trainee?limit=${newlimit}&skip=${newskip}`, {}).then((res)=>  {
+      if(res.data.data.count !== 0) {
+       this.setState({ dataList: res.data.data.records, loading: false, totalData: res.data.data.count });
+      }
+      else {
+        this.setState({page: page - 1, dataList: res.data.data.records, loading: false, totalData: res.data.data.count });
+
+      }
+      });
 
 
   };
+
+  handleCallApi = () => {
+    const { page } = this.state;
+    const newskip =  10 * (page);
+    const newlimit =  10 ;
+    this.setState({ page: page, loading: true })
+    callApi('get', `trainee?limit=${newlimit}&skip=${newskip}`, {}).then((res)=>{this.setState({ dataList: res.data.data.records, loading: false, totalData: res.data.data.count });});
+
+
+  };
+
+
 
   componentDidMount() {
     const {
     skip, limit,
     } = this.state;
-    callApi('get', `trainee?limit=${limit}&skip=${skip}`, {}).then((res)=>{this.setState({ dataList: res.data.data.records, loading: false, totalData: res.data.data.count });}).catch((err)=>{this.setState({error: err, loading: false})});
+    callApi('get', `trainee?limit=${limit}&skip=${skip}`, {}).then((res)=>{ console.log("daraaaaaaaaaa",res.data.data.records) ;this.setState({ dataList: res.data.data.records, loading: false, totalData: res.data.data.count });}).catch((err)=>{this.setState({error: err, loading: false})});
 
   }
   handleSnackbar = (openSnackbar) => {

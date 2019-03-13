@@ -82,7 +82,7 @@ renderForTableBody = () => {
     data.map(row => (
       <TableRow key={row.id} className={classes.row} hover>
         {columns.map(column => (
-          <TableCell align={column.align} onClick={this.handleClick(row.id)} component="th" scope="row">
+          <TableCell align={column.align} onClick={this.handleClick(row._id)} component="th" scope="row">
             { (column.format) ? column.format(row[column.field]) : row[column.field]}
 
           </TableCell>

@@ -6,7 +6,7 @@ const withLoaderAndMessage = WrappedComponent => {
     state = {};
 
     render() {
-      const { loading, dataLength, error } = this.props;
+      const { loading, dataLength, page } = this.props;
       if (!loading && dataLength ) {
         return <WrappedComponent {...this.props} />;
       }
@@ -18,7 +18,11 @@ const withLoaderAndMessage = WrappedComponent => {
         );
       }
 
+        if(!page) {
       return <p>OOPS!, No More Trainees</p>;
+        }
+        return <WrappedComponent {...this.props} />;
+
     }
   }
 
