@@ -11,7 +11,6 @@ export const callApi = async (methodType, url, credentials) => {
     });
     return response;
   } catch (err) {
-    console.log('err', err);
     return err;
   }
 };
