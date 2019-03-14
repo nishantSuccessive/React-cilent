@@ -1,28 +1,28 @@
-import React, { Fragment } from "react";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-import IconButton from "@material-ui/core/IconButton";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import Email from "@material-ui/icons/Mail";
-import Person from "@material-ui/icons/Person";
-import * as yup from "yup";
-import { callApi } from "../../../../lib/utils/api";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import React from 'react';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import IconButton from '@material-ui/core/IconButton';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import Email from '@material-ui/icons/Mail';
+import Person from '@material-ui/icons/Person';
+import * as yup from 'yup';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { callApi } from '../../../../lib/utils/api';
 
 const styles = () => ({
   root: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   textField: {
-    width: "100%"
-  }
+    width: '100%',
+  },
 });
 const schema = yup.object().shape({
   name: yup.string().required(),
@@ -32,106 +32,102 @@ const schema = yup.object().shape({
     .required(),
   password: yup
     .string()
-    .required("No password provided.")
+    .required('No password provided.')
     .matches(
       /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/,
-      "Password can contain at least one upper and lower letter and at least one numeric and special character."
+      'Password can contain at least one upper and lower letter and at least one numeric and special character.',
     )
     .min(8),
   confirmpassword: yup
     .string()
-    .oneOf([yup.ref("password"), null])
-    .required("Password confirm is required")
+    .oneOf([yup.ref('password'), null])
+    .required('Password confirm is required'),
 });
 
 class EditTrainee extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: "",
-      email: "",
+      name: '',
+      email: '',
       fullWidth: true,
-      maxWidth: "md",
+      maxWidth: 'md',
       isTouched: {
         name: false,
-        email: false
+        email: false,
       },
       hasErrors: {
         name: false,
-        email: false
+        email: false,
       },
       error: {
-        name: "",
-        email: ""
+        name: '',
+        email: '',
       },
-      error: {
-        name: "",
-        email: ""
-      }
     };
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const { data } = nextProps;
-    if (prevState.name !== "" || prevState.email !== "") {
+    if (prevState.name !== '' || prevState.email !== '') {
       if (prevState.name === data.name || prevState.email === data.email) {
         return { name: prevState.name, email: prevState.email };
       }
     }
     return {
       name: data.name,
-      email: data.email
+      email: data.email,
     };
   }
 
   handleClick = async (e, openSnackbar) => {
     const { name, email } = this.state;
     const { onSubmit, data } = this.props;
+    const { _id } = data;
     e.preventDefault();
     const { loading } = this.state;
     if (!loading) {
       this.setState({
-        success: false,
-        loading: true
+        loading: true,
       });
     }
 
-    const output = await callApi("put", "trainee", {
-      id: data._id,
-      name: name,
-      email: email
+    const output = await callApi('put', 'trainee', {
+      id: _id,
+      name,
+      email,
     });
 
     if (output.status === 200) {
       this.setState({
         loading: false,
         name,
-        email
+        email,
       });
       onSubmit({ name, email });
-      openSnackbar("successivefully created", "success");
+      openSnackbar('successivefully created', 'success');
     } else {
       this.setState({
-        loading: false
+        loading: false,
       });
-      openSnackbar("status not cleared 400", "error");
+      openSnackbar('status not cleared 400', 'error');
     }
-    console.log("output is ", output);
+    console.log('output is ', output);
   };
 
-  handleChange = field => event => {
-    console.log("calling handle change");
+  handleChange = field => (event) => {
+    console.log('calling handle change');
     const { isTouched } = this.state;
     this.setState(
       {
         [field]: event.target.value,
-        isTouched: { ...isTouched, [field]: true }
+        isTouched: { ...isTouched, [field]: true },
       },
-      () => this.validateErrors(field)
+      () => this.validateErrors(field),
     );
   };
 
-  forblur = value => {
+  forblur = (value) => {
     this.validateErrors(value);
   };
 
@@ -141,7 +137,7 @@ class EditTrainee extends React.Component {
 
   handleClickShowConfirmPassword = () => {
     this.setState(state => ({
-      showconfirmpassword: !state.showconfirmpassword
+      showconfirmpassword: !state.showconfirmpassword,
     }));
   };
 
@@ -159,7 +155,7 @@ class EditTrainee extends React.Component {
     return true;
   };
 
-  validateErrors = value => {
+  validateErrors = (value) => {
     let isPresent = false;
 
     const {
@@ -168,7 +164,7 @@ class EditTrainee extends React.Component {
       email,
       password,
       confirmpassword,
-      hasErrors
+      hasErrors,
     } = this.state;
 
     schema
@@ -177,40 +173,40 @@ class EditTrainee extends React.Component {
           name,
           email,
           password,
-          confirmpassword
+          confirmpassword,
         },
-        { abortEarly: false }
+        { abortEarly: false },
       )
       .then(() => {
         this.setState({
-          error: { ...error, [value]: "" },
-          hasErrors: { ...hasErrors, [value]: false }
+          error: { ...error, [value]: '' },
+          hasErrors: { ...hasErrors, [value]: false },
         });
       })
-      .catch(err => {
+      .catch((err) => {
         isPresent = true;
-        err.inner.forEach(element => {
+        err.inner.forEach((element) => {
           if (element.path === value) {
             this.setState({
               error: { ...error, [value]: element.message },
-              hasErrors: { ...hasErrors, [value]: true }
+              hasErrors: { ...hasErrors, [value]: true },
             });
           }
         });
         if (
-          err.inner.some(option => option.path === value) &&
-          hasErrors[value]
+          err.inner.some(option => option.path === value)
+          && hasErrors[value]
         ) {
           this.setState({
-            error: { ...error, [value]: "" },
-            hasErrors: { ...hasErrors, [value]: false }
+            error: { ...error, [value]: '' },
+            hasErrors: { ...hasErrors, [value]: false },
           });
         }
       });
     if (!isPresent) {
       this.setState({
-        error: { ...error, [value]: "" },
-        hasErrors: { ...hasErrors, [value]: false }
+        error: { ...error, [value]: '' },
+        hasErrors: { ...hasErrors, [value]: false },
       });
     }
   };
@@ -227,16 +223,16 @@ class EditTrainee extends React.Component {
         margin="normal"
         variant="outlined"
         value={email}
-        onChange={this.handleChange("email")}
-        onBlur={() => this.forblur("email")}
-        helperText={error.email || ""}
+        onChange={this.handleChange('email')}
+        onBlur={() => this.forblur('email')}
+        helperText={error.email || ''}
         InputProps={{
-          onBlur: () => this.forblur("email"),
+          onBlur: () => this.forblur('email'),
           startAdornment: (
             <InputAdornment position="start">
               <IconButton>{<Email />}</IconButton>
             </InputAdornment>
-          )
+          ),
         }}
       />
     );
@@ -255,23 +251,25 @@ class EditTrainee extends React.Component {
         className={classes.textField}
         margin="normal"
         variant="outlined"
-        onChange={this.handleChange("name")}
-        helperText={error.name || ""}
+        onChange={this.handleChange('name')}
+        helperText={error.name || ''}
         InputProps={{
-          onBlur: () => this.forblur("name"),
+          onBlur: () => this.forblur('name'),
 
           startAdornment: (
             <InputAdornment position="start">
               <IconButton>{<Person />}</IconButton>
             </InputAdornment>
-          )
+          ),
         }}
       />
     );
   };
 
   render() {
-    const { open, classes, onCancel, openSnackbar } = this.props;
+    const {
+      open, classes, onCancel, openSnackbar,
+    } = this.props;
     const { fullWidth, maxWidth, loading } = this.state;
     return (
       <Dialog
@@ -299,8 +297,7 @@ class EditTrainee extends React.Component {
               color="primary"
               onClick={e => this.handleClick(e, openSnackbar)}
             >
-              {" "}
-              {loading ? <CircularProgress size={24} /> : "Submit"}{" "}
+              {loading ? <CircularProgress size={24} /> : 'Submit'}
             </Button>
           ) : (
             <Button disabled>Submit</Button>
@@ -312,12 +309,15 @@ class EditTrainee extends React.Component {
 }
 EditTrainee.propTypes = {
   open: PropTypes.bool,
-  onClose: PropTypes.func,
-  classes: PropTypes.objectOf(PropTypes.object).isRequired
+  onCancel: PropTypes.func.isRequired,
+  openSnackbar: PropTypes.func.isRequired,
+  data: PropTypes.arrayOf(PropTypes.object),
+  classes: PropTypes.objectOf(PropTypes.object).isRequired,
+  onSubmit: PropTypes.func.isRequired,
 };
 EditTrainee.defaultProps = {
   open: false,
-  onClose: () => {}
+  data: [],
 };
 
 export default withStyles(styles)(EditTrainee);

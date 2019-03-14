@@ -1,31 +1,31 @@
-import React, { Fragment } from "react";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import PropTypes from "prop-types";
-import Grid from "@material-ui/core/Grid";
-import { withStyles } from "@material-ui/core/styles";
-import IconButton from "@material-ui/core/IconButton";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import Visibility from "@material-ui/icons/Visibility";
-import VisibilityOff from "@material-ui/icons/VisibilityOff";
-import Email from "@material-ui/icons/Mail";
-import Person from "@material-ui/icons/Person";
-import * as yup from "yup";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import { callApi } from "../../../../lib/utils/api";
+import React from 'react';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import PropTypes from 'prop-types';
+import Grid from '@material-ui/core/Grid';
+import { withStyles } from '@material-ui/core/styles';
+import IconButton from '@material-ui/core/IconButton';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import Email from '@material-ui/icons/Mail';
+import Person from '@material-ui/icons/Person';
+import * as yup from 'yup';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { callApi } from '../../../../lib/utils/api';
 
 const styles = () => ({
   root: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   textField: {
-    width: "100%"
-  }
+    width: '100%',
+  },
 });
 const schema = yup.object().shape({
   name: yup.string().required(),
@@ -35,16 +35,16 @@ const schema = yup.object().shape({
     .required(),
   password: yup
     .string()
-    .required("No password provided.")
+    .required('No password provided.')
     .matches(
       /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/,
-      "Password can contain at least one upper and lower letter and at least one numeric and special character."
+      'Password can contain at least one upper and lower letter and at least one numeric and special character.',
     )
     .min(8),
   confirmpassword: yup
     .string()
-    .oneOf([yup.ref("password"), null])
-    .required("Password confirm is required")
+    .oneOf([yup.ref('password'), null])
+    .required('Password confirm is required'),
 });
 
 class AddDialog extends React.Component {
@@ -54,47 +54,47 @@ class AddDialog extends React.Component {
       showPassword: false,
       showconfirmpassword: false,
       fullWidth: true,
-      maxWidth: "md",
-      confirmpassword: "",
+      maxWidth: 'md',
+      confirmpassword: '',
       isTouched: {
         name: false,
         email: false,
         password: false,
-        confirmpassword: false
+        confirmpassword: false,
       },
       hasErrors: {
         name: false,
         email: false,
         password: false,
-        confirmpassword: false
+        confirmpassword: false,
       },
       error: {
-        name: "",
-        email: "",
-        password: "",
-        confirmpassword: ""
+        name: '',
+        email: '',
+        password: '',
+        confirmpassword: '',
       },
       credentials: {
-        name: "",
-        email: "",
-        password: ""
-      }
+        name: '',
+        email: '',
+        password: '',
+      },
     };
   }
 
-  handleChange = field => event => {
+  handleChange = field => (event) => {
     const { isTouched, credentials } = this.state;
     this.setState(
       {
         [field]: event.target.value,
         isTouched: { ...isTouched, [field]: true },
-        credentials: { ...credentials, [field]: event.target.value }
+        credentials: { ...credentials, [field]: event.target.value },
       },
-      () => this.validateErrors(field)
+      () => this.validateErrors(field),
     );
   };
 
-  forblur = value => {
+  forblur = (value) => {
     this.validateErrors(value);
   };
 
@@ -104,7 +104,7 @@ class AddDialog extends React.Component {
 
   handleClickShowConfirmPassword = () => {
     this.setState(state => ({
-      showconfirmpassword: !state.showconfirmpassword
+      showconfirmpassword: !state.showconfirmpassword,
     }));
   };
 
@@ -122,10 +122,12 @@ class AddDialog extends React.Component {
     return true;
   };
 
-  validateErrors = value => {
+  validateErrors = (value) => {
     let isPresent = false;
 
-    const { error, credentials, confirmpassword, hasErrors } = this.state;
+    const {
+      error, credentials, confirmpassword, hasErrors,
+    } = this.state;
     const { name, email, password } = credentials;
     schema
       .validate(
@@ -133,40 +135,40 @@ class AddDialog extends React.Component {
           name,
           email,
           password,
-          confirmpassword
+          confirmpassword,
         },
-        { abortEarly: false }
+        { abortEarly: false },
       )
       .then(() => {
         this.setState({
-          error: { ...error, [value]: "" },
-          hasErrors: { ...hasErrors, [value]: false }
+          error: { ...error, [value]: '' },
+          hasErrors: { ...hasErrors, [value]: false },
         });
       })
-      .catch(err => {
+      .catch((err) => {
         isPresent = true;
-        err.inner.forEach(element => {
+        err.inner.forEach((element) => {
           if (element.path === value) {
             this.setState({
               error: { ...error, [value]: element.message },
-              hasErrors: { ...hasErrors, [value]: true }
+              hasErrors: { ...hasErrors, [value]: true },
             });
           }
         });
         if (
-          err.inner.some(option => option.path === value) &&
-          hasErrors[value]
+          err.inner.some(option => option.path === value)
+          && hasErrors[value]
         ) {
           this.setState({
-            error: { ...error, [value]: "" },
-            hasErrors: { ...hasErrors, [value]: false }
+            error: { ...error, [value]: '' },
+            hasErrors: { ...hasErrors, [value]: false },
           });
         }
       });
     if (!isPresent) {
       this.setState({
-        error: { ...error, [value]: "" },
-        hasErrors: { ...hasErrors, [value]: false }
+        error: { ...error, [value]: '' },
+        hasErrors: { ...hasErrors, [value]: false },
       });
     }
   };
@@ -178,27 +180,26 @@ class AddDialog extends React.Component {
     const { loading } = this.state;
     if (!loading) {
       this.setState({
-        success: false,
-        loading: true
+        loading: true,
       });
     }
-    console.log(localStorage.getItem("key"));
+    console.log(localStorage.getItem('key'));
 
-    const output = await callApi("post", "trainee", credentials);
+    const output = await callApi('post', 'trainee', credentials);
 
     if (output.status === 200) {
       this.setState({
-        loading: false
+        loading: false,
       });
       onSubmit(credentials);
-      openSnackbar("successfully created", "success");
+      openSnackbar('successfully created', 'success');
     } else {
       this.setState({
-        loading: false
+        loading: false,
       });
-      openSnackbar("status not cleared 400", "error");
+      openSnackbar('status not cleared 400', 'error');
     }
-    console.log("output is ", output);
+    console.log('output is ', output);
   };
 
   renderForName = () => {
@@ -214,16 +215,16 @@ class AddDialog extends React.Component {
         className={classes.textField}
         margin="normal"
         variant="outlined"
-        onChange={this.handleChange("name")}
-        helperText={error.name || ""}
+        onChange={this.handleChange('name')}
+        helperText={error.name || ''}
         InputProps={{
-          onBlur: () => this.forblur("name"),
+          onBlur: () => this.forblur('name'),
 
           startAdornment: (
             <InputAdornment position="start">
               <IconButton>{<Person />}</IconButton>
             </InputAdornment>
-          )
+          ),
         }}
       />
     );
@@ -241,16 +242,16 @@ class AddDialog extends React.Component {
         margin="normal"
         variant="outlined"
         value={credentials.email}
-        onChange={this.handleChange("email")}
-        onBlur={() => this.forblur("email")}
-        helperText={error.email || ""}
+        onChange={this.handleChange('email')}
+        onBlur={() => this.forblur('email')}
+        helperText={error.email || ''}
         InputProps={{
-          onBlur: () => this.forblur("email"),
+          onBlur: () => this.forblur('email'),
           startAdornment: (
             <InputAdornment position="start">
               <IconButton>{<Email />}</IconButton>
             </InputAdornment>
-          )
+          ),
         }}
       />
     );
@@ -263,28 +264,28 @@ class AddDialog extends React.Component {
       <TextField
         error={Boolean(error.password)}
         InputProps={{
-          onBlur: () => this.forblur("password"),
+          onBlur: () => this.forblur('password'),
           startAdornment: (
             <InputAdornment position="start">
               <IconButton
                 aria-label="Toggle password visibility"
                 onClick={this.handleClickShowPassword}
               >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
+                {showPassword ? <Visibility /> : <VisibilityOff />}
               </IconButton>
             </InputAdornment>
-          )
+          ),
         }}
         id="outlined-name"
         label="Password"
-        type={showPassword ? "text" : "password"}
+        type={showPassword ? 'text' : 'password'}
         value={credentials.password}
         className={classes.textField}
         margin="normal"
         variant="outlined"
-        onChange={this.handleChange("password")}
-        onBlur={() => this.forblur("password")}
-        helperText={error.password || ""}
+        onChange={this.handleChange('password')}
+        onBlur={() => this.forblur('password')}
+        helperText={error.password || ''}
       />
     );
   };
@@ -296,91 +297,95 @@ class AddDialog extends React.Component {
       <TextField
         error={Boolean(error.confirmpassword)}
         InputProps={{
-          onBlur: () => this.forblur("confirmpassword"),
+          onBlur: () => this.forblur('confirmpassword'),
           startAdornment: (
             <InputAdornment position="start">
               <IconButton
                 aria-label="Toggle password visibility"
                 onClick={this.handleClickShowConfirmPassword}
               >
-                {showconfirmpassword ? <VisibilityOff /> : <Visibility />}
+                {showconfirmpassword ? <Visibility /> : <VisibilityOff />}
               </IconButton>
             </InputAdornment>
-          )
+          ),
         }}
         id="outlined-name"
         label="Confirm Password"
-        type={showconfirmpassword ? "text" : "password"}
+        type={showconfirmpassword ? 'text' : 'password'}
         value={confirmpassword}
-        onBlur={() => this.forblur("confirmpassword")}
-        helperText={error.confirmpassword || ""}
+        onBlur={() => this.forblur('confirmpassword')}
+        helperText={error.confirmpassword || ''}
         className={classes.textField}
         margin="normal"
         variant="outlined"
-        onChange={this.handleChange("confirmpassword")}
+        onChange={this.handleChange('confirmpassword')}
       />
     );
   };
 
   render() {
-    const { open, onClose, classes, onCancel, openSnackbar } = this.props;
-    const { password, fullWidth, maxWidth, name, email, loading } = this.state;
+    const {
+      open, onClose, classes, onCancel, openSnackbar,
+    } = this.props;
+    const {
+      fullWidth, maxWidth, loading,
+    } = this.state;
     return (
-      <Fragment>
-        <Dialog
-          keepMounted
-          open={open}
-          onClose={onClose}
-          fullWidth={fullWidth}
-          maxWidth={maxWidth}
-        >
-          <DialogTitle id="form-dialog-title">Add Trainee</DialogTitle>
-          <DialogContent>
-            <DialogContentText>Enter your Trainee details</DialogContentText>
-            <div className={classes.root}>
-              {this.renderForName()}
+      <Dialog
+        keepMounted
+        open={open}
+        onClose={onClose}
+        fullWidth={fullWidth}
+        maxWidth={maxWidth}
+      >
+        <DialogTitle id="form-dialog-title">Add Trainee</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Enter your Trainee details</DialogContentText>
+          <div className={classes.root}>
+            {this.renderForName()}
 
-              {this.renderForEmail()}
-              <Grid container spacing={24}>
-                <Grid item xs>
-                  {this.renderForPassword()}
-                </Grid>
-                <Grid item xs>
-                  {this.renderForConfirmPassword()}
-                </Grid>
+            {this.renderForEmail()}
+            <Grid container spacing={24}>
+              <Grid item xs>
+                {this.renderForPassword()}
               </Grid>
-            </div>
-          </DialogContent>
+              <Grid item xs>
+                {this.renderForConfirmPassword()}
+              </Grid>
+            </Grid>
+          </div>
+        </DialogContent>
 
-          <DialogActions>
-            <Button color="primary" onClick={onCancel}>
+        <DialogActions>
+          <Button color="primary" onClick={onCancel}>
               Cancel
+          </Button>
+          {this.forErrors() ? (
+            <Button
+              color="primary"
+              disabled={loading}
+              onClick={e => this.handleClick(e, openSnackbar)}
+            >
+              {loading ? <CircularProgress size={24} /> : 'Submit'}
             </Button>
-            {this.forErrors() ? (
-              <Button
-                color="primary"
-                disabled={loading}
-                onClick={e => this.handleClick(e, openSnackbar)}
-              >
-                {loading ? <CircularProgress size={24} /> : "Submit"}
-              </Button>
-            ) : (
-              <Button disabled>Submit</Button>
-            )}
-          </DialogActions>
-        </Dialog>
-      </Fragment>
+          ) : (
+            <Button disabled>Submit</Button>
+          )}
+        </DialogActions>
+      </Dialog>
     );
   }
 }
 AddDialog.propTypes = {
   open: PropTypes.bool,
-  onClose: PropTypes.func,
-  classes: PropTypes.objectOf(PropTypes.object).isRequired
+  onSubmit: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
+  openSnackbar: PropTypes.func.isRequired,
+  classes: PropTypes.objectOf(PropTypes.object).isRequired,
 };
 AddDialog.defaultProps = {
   open: false,
-  onClose: () => {}
 };
 
 export default withStyles(styles)(AddDialog);
